@@ -15,6 +15,7 @@
      "author": "Santosh Patil",
      "license": "ISC",
      "dependencies": {
-          "express": "^4.21.1"
+          "express": "^4.21.1",
+          "i": "^0.3.7"
      }
 }
