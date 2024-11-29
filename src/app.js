@@ -3,34 +3,15 @@ const app = express();
 
 const { adminAuth, userAuth } = require("./middlewares/auth");
 
-app.use("/admin",adminAuth);
-
-app.use("/admin/getAllData", (req, res, next) => {
-     console.log("All User Data  rights.....called");
-     res.send("All Users Data ");
+app.get('/getUserData', (req, res, next) => {
+     throw new error("mankind error");
+     res.send("user data sent");
 });
 
-app.use("/admin/delete", (req, res, next) => {
-     console.log("User deleted  rights.....called");
-     res.send(" Users deleted ");
-});
-
-app.use('/', (req, res, next) => {
-     console.log("before user called....");
-     //res.send("wildcard matches");
-     next();
-});
-
-app.use('/user', userAuth,(req, res, next) => {
-     console.log("in user called....");
-     res.send("user matches");
-     next();
-});
-
-app.use('/userLogin',(req, res, next) => {
-     console.log("in userLogin called....");
-     res.send("user login no need auth");
-     next();
+app.use("/", (err, req, res, next) => {
+     if (err) {
+          res.status(500).send("Error Handle by route handler");
+     }
 });
 
 app.listen(3000, () => {
