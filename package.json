@@ -15,8 +15,10 @@
      "author": "Santosh Patil",
      "license": "ISC",
      "dependencies": {
+          "bcrypt": "^5.1.1",
           "express": "^4.21.1",
           "i": "^0.3.7",
-          "mongoose": "^8.8.3"
+          "mongoose": "^8.8.3",
+          "validator": "^13.12.0"
      }
 }
