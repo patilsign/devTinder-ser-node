@@ -12,7 +12,7 @@ app.post('/signup', async (req, res, next) => {
           await user.save();
           res.send("user added successfully");
      } catch (err) {
-          res.status(400).send("failed to save data", err.message);
+          res.status(400).send("failed to save data" + err.message);
      }
 });
 
@@ -23,12 +23,12 @@ app.get('/user', async (req, res) => {
           const userData = await User.findOne({ email: userEmail });
           console.log(userEmail, userData);
           if (!userData) {
-               res.status(404).send("user not found", err.message);
+               res.status(404).send("user not found" + err.message);
           } else {
                res.send(userData);
           }
      } catch (err) {
-          res.status(404).send("Something went wrong", err.message);
+          res.status(404).send("Something went wrong" + err.message);
      }
 }
 )
@@ -40,12 +40,12 @@ app.get('/feed', async (req, res) => {
           const userData = await User.find({});
           console.log(userEmail, userData);
           if (userData.length === 0) {
-               res.status(404).send("user not found", err.message);
+               res.status(404).send("user not found" + err.message);
           } else {
                res.send(userData);
           }
      } catch (err) {
-          res.status(404).send("Something went wrong", err.message);
+          res.status(404).send("Something went wrong" + err.message);
      }
 }
 )
@@ -56,12 +56,12 @@ app.delete('/userDelete', async (req, res) => {
           //const userData = await User.findByIdAndDelete({userId});
           await User.findByIdAndDelete({ _id: userId });
           if (!userId) {
-               res.status(404).send("Please Provide user Id", err.message);
+               res.status(404).send("Please Provide user Id" + err.message);
           } else {
                res.send("User delete successfully");
           }
      } catch (err) {
-          res.status(404).send("Something went wrong", err.message);
+          res.status(404).send("Something went wrong" + err.message);
      }
 }
 )
@@ -71,15 +71,19 @@ app.patch('/updateUser', async (req, res) => {
      console.log(data)
      try {
           //const userData = await User.findByIdAndUpdate({userId});
-          const returnData = await User.findByIdAndUpdate(data.userId, { data }, [returnDocument = 'after']);
+          const returnData = await User.findByIdAndUpdate(data.userId, data,
+               {
+                    returnDocument: 'after',
+                    runValidators: true
+               });
           if (!data.userId) {
-               res.status(404).send("Please Provide user Id", err.message);
+               res.status(404).send("Please Provide user Id" + err.message);
           } else {
-               console.log(returnData)
+               console.log(returnData);
                res.send("User Updated successfully",);
           }
      } catch (err) {
-          res.status(404).send("Something went wrong", err.message);
+          res.status(404).send("Something went wrong" + err.message);
      }
 }
 )
