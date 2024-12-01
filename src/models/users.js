@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
      firstName: {
@@ -51,6 +53,19 @@ const userSchema = new mongoose.Schema({
           default: "User is having social media interest"
      }
 }, { timestamps: true });
+
+userSchema.methods.getJWT = async function () {
+     const user = this;
+     const token = await jwt.sign({ _id: user._id }, "sign@3575", { expiresIn: "1d" });
+     return token;
+};
+
+userSchema.methods.verifyPassword = async function(inputPassByUser){
+     const user = this;
+     console.log(user,inputPassByUser);
+     const passwordMatch = await bcrypt.compare(inputPassByUser, user.password);
+     return passwordMatch;
+};
 
 const User = mongoose.model('User', userSchema);
 

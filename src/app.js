@@ -41,12 +41,11 @@ app.post("/login", async (req, res) => {
                if (!user) {
                     throw new Error("Invalid Credentils");
                }
-               const passwordMatch = await bcrypt.compare(password, user.password);
+               const passwordMatch = await user.verifyPassword(password);
                if (!passwordMatch) {
                     throw new Error("Invalid Credentials");
                } else {
-                    const token = jwt.sign({ _id: user._id }, "sign@3575");
-                    console.log(token);
+                    const token = await user.getJWT();
                     res.cookie("token", token);
                     res.send("User Login Successful");
                }
@@ -56,27 +55,29 @@ app.post("/login", async (req, res) => {
      }
 })
 
-app.get('/profile', async (req, res) => {
-     const cookies = req.cookies;
-     const { token } = cookies
-     console.log(token);
+app.post('/profile', userAuth, async (req, res) => {
      try {
-          const decodeToken = await jwt.verify(token, 'sign@3575');
-          console.log(decodeToken);
-          const user = await User.findOne({ _id: decodeToken._id });
-          res.send("Reading Cookie, Logged In User is :" + user);
+          const user = req.user; res.send("Reading Cookie, Logged In User is :" + user);
      } catch (err) {
           res.status(404).send("ERROR :" + err.message);
      }
 }
-)
+);
+
+app.post('/sendConnection', userAuth, async (req, res) => {
+     try {
+          const user = req.user;
+          res.send(user.firstName + " " + user.lastName + " -- sent connection request");
+     } catch (err) {
+          res.status(404).send("ERROR :" + err.message);
+     }
+}
+);
 
 app.get('/user', async (req, res) => {
      const userEmail = req.body.email;
      try {
-          console.log(userEmail)
           const userData = await User.findOne({ email: userEmail });
-          console.log(userEmail, userData);
           if (!userData) {
                res.status(404).send("user not found" + err.message);
           } else {
@@ -91,9 +92,7 @@ app.get('/user', async (req, res) => {
 app.get('/feed', async (req, res) => {
      const userEmail = req.body.email;
      try {
-          console.log(userEmail)
           const userData = await User.find({});
-          console.log(userEmail, userData);
           if (userData.length === 0) {
                res.status(404).send("user not found" + err.message);
           } else {
@@ -123,7 +122,6 @@ app.delete('/userDelete', async (req, res) => {
 
 app.patch('/updateUser', async (req, res) => {
      const data = req.body;
-     console.log(data, "-----", Object.keys(data));
      try {
           const ALLOW_FIELDS = ['userId', 'firstName', 'lastName', 'about', 'photoUrl', 'skills', 'password'];
           const isEmailAllowed = Object.keys(data).every(checkFields);
@@ -142,7 +140,6 @@ app.patch('/updateUser', async (req, res) => {
                if (!data.userId) {
                     res.status(404).send("Please Provide user Id" + err.message);
                } else {
-                    console.log(returnData);
                     res.send("User Updated successfully",);
                }
           }

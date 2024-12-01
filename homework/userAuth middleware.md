@@ -15,9 +15,12 @@ const adminAuth = (req, res, next) => {
 const userAuth = async (req, res, next) => {
      const cookies = req.cookies;
      const { token } = cookies
+     console.log(token);
      try {
           const decodeToken = await jwt.verify(token, 'sign@3575');
+          console.log(decodeToken,"decode token user AUth");
           const user = await User.findOne({ _id: decodeToken._id });
+          console.log(user, "user in userAuth")
           req.user = user;
           next();
      } catch (err) {
