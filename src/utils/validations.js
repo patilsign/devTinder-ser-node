@@ -7,9 +7,23 @@ const validateData = (req) => {
           throw new Error("Email Id is Invalid.. Explicit Validations");
      }
 
-     if(!validator.isStrongPassword(req.password)){
+     if (!validator.isStrongPassword(req.password)) {
           throw new Error("Password Must be Strong.. Explicit Validations");
      }
 }
 
-module.exports = { validateData }
+const isFieldsAllowedToUpdate = (req) => {
+     console.log(req);
+     const ALLOW_FIELDS = ['firstName', 'lastName', 'gender', 'about', 'photoUrl', 'skills'];
+     const check = function (item) {
+          return ALLOW_FIELDS.includes(item);
+     };
+     const validateFields = Object.keys(req).every(check);
+
+     if (!validateFields) {
+          throw new Error("Fields not allowed to update");
+     }
+     return req.user
+}
+
+module.exports = { validateData, isFieldsAllowedToUpdate }
