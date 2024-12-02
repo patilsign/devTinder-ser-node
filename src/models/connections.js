@@ -3,11 +3,13 @@ const mongoose = require('mongoose');
 const connectionSchema = new mongoose.Schema({
      fromUserId: {
           type: mongoose.Schema.Types.ObjectId,
-          required: true
+          required: true,
+          ref: "User"
      },
      toUserId: {
           type: mongoose.Schema.Types.ObjectId,
-          required: true
+          required: true,
+          ref: "User"
      },
      status: {
           type: String,
@@ -26,4 +28,4 @@ connectionSchema.index({ fromUserId: 1, toUserId: 1 });
 
 const ConnectionRequestModel = new mongoose.model("Connection Request", connectionSchema);
 
-module.exports = ConnectionRequestModel
+module.exports = { "ConnectionRequest": ConnectionRequestModel }

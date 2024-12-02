@@ -11,7 +11,7 @@ const app = express();
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
-const userRouter = require("./routes/request");
+const userRouter = require("./routes/user");
 
 app.use(express.json());
 app.use(cookieParser());

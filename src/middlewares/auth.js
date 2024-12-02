@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const  User  = require('../models/users');
 
 const adminAuth = (req, res, next) => {
-     console.log("admin rights.....called");
      const user = "admin"
      if (user === "admin") {
           next();
