@@ -1,8 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
-
 const User = require('../models/users');
 const { ConnectionRequest } = require('../models/connections');
 
@@ -19,11 +16,7 @@ userRouter.post('/sendConnectionRequest/:status/:toUserId', userAuth, async (req
           const fromUserId = loggedInUser._id;
           const toUserId = req.params.toUserId;
           const status = req.params.status;
-
           const statusCheck = ["interested", "ignored"];
-          console.log(fromUserId, "-11111");
-          console.log(toUserId, "-222222");
-
           if (!statusCheck.includes(status)) {
                return res.json({ message: "Please send valid Status" });
           };
@@ -44,7 +37,6 @@ userRouter.post('/sendConnectionRequest/:status/:toUserId', userAuth, async (req
                ]
           });
           if (existingConnectionRequest) {
-               console.log(existingConnectionRequest, "checking existing connections -333333");
                return res.json({ "message": "Connection is Already Exists" });
           }
           const connection = new ConnectionRequest({
@@ -62,7 +54,6 @@ userRouter.post('/sendConnectionRequest/:status/:toUserId', userAuth, async (req
 userRouter.post('/replyConnectionRequest/:status/:toUserId', userAuth, async (req, res) => {
      try {
           const loggedUser = req.user;
-
           const requestId = req.params.toUserId
           const status = req.params.status
 
@@ -71,14 +62,12 @@ userRouter.post('/replyConnectionRequest/:status/:toUserId', userAuth, async (re
                toUserId: loggedUser._id,
                status: "interested"
           });
-          console.log(connectionRequest, "2222");
           if (!connectionRequest) {
                return res
                     .status(400)
                     .json({ "message": "Connection is Already Exists" });
           }
           connectionRequest.status = status;
-          console.log(connectionRequest, "2222  nextttttttt");
           const data = await connectionRequest.save();
           res.json({ message: "Connection Accepted successfully", data: data });
 
@@ -94,9 +83,6 @@ userRouter.get('/user/request/received', userAuth, async (req, res) => {
                toUserId: loggedUser._id,
                status: "interested"
           }).populate("fromUserId", USER_PUBLIC_DATA);
-
-          console.log(connectionRequest, "11111111111");
-
           res.json({ message: "Received Connection Requests", data: connectionRequest });
      } catch (err) {
           await res.status(404).send("Not Valid user Connection" + err)
@@ -115,8 +101,6 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
                .populate("fromUserId", USER_PUBLIC_DATA)
                .populate("toUserId", USER_PUBLIC_DATA);
 
-          console.log(connectionRequest, "connections");
-
           const data = connectionRequest.map((row) => {
                if (row.fromUserId._id.toString() === loggedUser._id.toString()) {
                     return row.toUserId
@@ -129,4 +113,35 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
      }
 });
 
+
+userRouter.get("/feed", userAuth, async (req, res) => {
+     try {
+          const loggedUser = req.user;
+          const connectionRequest = await ConnectionRequest.find({
+               $or: [{ fromUserId: loggedUser._id.toString() }, { toUserId: loggedUser._id.toString() }]
+          })
+               .select(["fromUserId", "toUserId"])
+               .populate("fromUserId", USER_PUBLIC_DATA)
+               .populate("toUserId", USER_PUBLIC_DATA);
+
+          console.log(connectionRequest, "111111111111");
+          const hideUserConnections = new Set();
+          connectionRequest.forEach((req) => {
+               hideUserConnections.add(req.fromUserId._id.toString());
+               hideUserConnections.add(req.toUserId._id.toString())
+          })
+          console.log(hideUserConnections, "all users connections 2222222222");
+
+          const user = await User.find({
+               $and: [
+                    { _id: { $nin: Array.from(hideUserConnections) } },
+                    { _id: { $ne: loggedUser._id } }
+               ]
+          });
+          console.log(user, "user 33333333333");
+          res.json({ message: "Connection Feed", data: user });
+     } catch (err) {
+          await res.status(404).send("Not Valid user Connection" + err)
+     }
+})
 module.exports = userRouter

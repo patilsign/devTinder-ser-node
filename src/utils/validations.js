@@ -12,7 +12,6 @@ const validateData = (req) => {
 }
 
 const isFieldsAllowedToUpdate = (req) => {
-     console.log(req);
      const ALLOW_FIELDS = ['firstName', 'lastName', 'gender', 'about', 'photoUrl', 'skills'];
      const check = function (item) {
           return ALLOW_FIELDS.includes(item);
