@@ -3,7 +3,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-
+const cors = require('cors');
 const { adminAuth, userAuth } = require("./middlewares/auth");
 const User = require('./models/users');
 
@@ -13,6 +13,11 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const userRouter = require("./routes/user");
 
+const customCorsOptions = {
+          origin:"http://localhost:5173",
+          credentails:true
+}
+app.use(cors(customCorsOptions))
 app.use(express.json());
 app.use(cookieParser());
 
