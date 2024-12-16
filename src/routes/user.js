@@ -6,7 +6,7 @@ const { ConnectionRequest } = require('../models/connections');
 const { adminAuth, userAuth } = require("../middlewares/auth");
 const { validateData } = require('../utils/validations');
 
-const USER_PUBLIC_DATA = "firstName lastName gender age photoUrl about"
+const USER_PUBLIC_DATA = "firstName lastName photoUrl about"
 
 const userRouter = express.Router();
 

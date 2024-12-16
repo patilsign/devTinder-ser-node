@@ -17,7 +17,7 @@ authRouter.post('/login', async (req, res) => {
           } else {
                const user = await User.findOne({ email });
                if (!user) {
-                    throw new Error("Invalid Credentils");
+                    throw new Error("Please enter Valid Email");
                }
                const passwordMatch = await user.verifyPassword(password);
                if (!passwordMatch) {

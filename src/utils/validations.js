@@ -12,7 +12,7 @@ const validateData = (req) => {
 }
 
 const isFieldsAllowedToUpdate = (req) => {
-     const ALLOW_FIELDS = ['firstName', 'lastName', 'gender', 'about', 'photoUrl', 'skills'];
+     const ALLOW_FIELDS = ['firstName', 'lastName', 'about', 'photoUrl', 'skills'];
      const check = function (item) {
           return ALLOW_FIELDS.includes(item);
      };
