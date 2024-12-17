@@ -14,7 +14,7 @@ console.log("auth login called");
 profileRouter.post("/profile", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.send("Reading Cookie, Logged In User is :" + user);
+    res.json({ message: "Reading Cookie, Logged In User is : :", data: user });
   } catch (err) {
     res.status(404).send("ERROR :" + err.message);
   }
@@ -41,7 +41,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       loogedInUser[key] = data[key];
     });
     loogedInUser.save();
-    res.send("User Updated successfully \n" + loogedInUser);
+    res.json({ message: "User Updated Successfully.", data: loogedInUser });
   } catch (err) {
     res.status(404).send("ERROR :" + err.message);
   }
