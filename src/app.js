@@ -17,6 +17,7 @@ const customCorsOptions = {
           origin:"http://localhost:5173",
           credentails:true
 }
+
 app.use(cors(customCorsOptions))
 app.use(express.json());
 app.use(cookieParser());
